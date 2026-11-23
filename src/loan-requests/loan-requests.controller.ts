@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { requestValidationPipe } from "../common/request-validation.pipe";
 import { CreateLoanRequestDto } from "./dto/create-loan-request.dto";
@@ -9,11 +9,16 @@ import { LoanRequestsService } from "./loan-requests.service";
 export class LoanRequestsController {
   constructor(private readonly service: LoanRequestsService) {}
 
+   // TODO BACK-A: recibir la consulta con @Query, validarla con el pipe y pasar el filtro.
+
+    //(ya, mas o menos revisarlo)
   @Get()
-  findAll() {
-    // TODO BACK-A: recibir la consulta con @Query, validarla con el pipe y pasar el filtro.
-    return this.service.findAll();
+  @UsePipes(new ValidationPipe({ transform: true}))
+  findAll(@Query() query: GetListLoanRequestsDto) {
+        return this.service.findAll();
   }
+   
+
 
   @Get(":id")
   findOne(@Param("id", ParseIntPipe) id: number) {
